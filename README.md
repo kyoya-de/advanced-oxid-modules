@@ -22,3 +22,8 @@ USAGE
 ```shell
 php bin/aom compile /path/to/AdvancedModule /path/to/OXID
 ```
+
+TODO
+====
+
+* Improve path usages in generated modules.
