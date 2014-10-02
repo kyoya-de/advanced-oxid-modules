@@ -23,8 +23,6 @@ class Mapping
 
     private $parentExecution;
 
-    private $returns;
-
     private $hasReturn;
 
     /**
@@ -145,26 +143,6 @@ class Mapping
     public function getParentExecution()
     {
         return $this->parentExecution;
-    }
-
-    /**
-     * @param mixed $returns
-     *
-     * @return Mapping
-     */
-    public function setReturns($returns)
-    {
-        $this->returns = $returns;
-
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getReturns()
-    {
-        return $this->returns;
     }
 
     /**

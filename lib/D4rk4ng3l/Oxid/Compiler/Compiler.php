@@ -8,14 +8,11 @@
 
 namespace D4rk4ng3l\Oxid\Compiler;
 
-use D4rk4ng3l\Oxid\AdvancedModule\Method;
+use D4rk4ng3l\Oxid\AdvancedModule\Annotations\Method;
 use D4rk4ng3l\Oxid\Module\Mapping;
 use Doctrine\Common\Annotations\Reader;
-use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Finder\Finder;
-use D4rk4ng3l\Oxid\Compiler\TokenParser;
-use Composer\Autoload\ClassLoader;
 
 class Compiler
 {
@@ -32,7 +29,7 @@ class Compiler
     /**
      * @var string
      */
-    private $annotationClass = "D4rk4ng3l\\Oxid\\AdvancedModule\\Module";
+    private $annotationClass = "D4rk4ng3l\\Oxid\\AdvancedModule\\Annotations\\Module";
 
     public function __construct(Reader $reader, OutputInterface $output = null)
     {
@@ -48,6 +45,8 @@ class Compiler
         $count = $finder->count();
         $this->output->writeln(sprintf('%u file(s) found', $count));
         $index = 0;
+
+        $mappings = array();
         foreach ($finder as $file) {
             $index++;
             $this->output->writeln(sprintf('Parsing file [%u/%u]: %s', $index, $count, $file));
@@ -59,21 +58,32 @@ class Compiler
                 continue;
             }
 
-            include $file;
+            if (!class_exists($tokenParser->getFullClassName(), false)) {
+                include $file;
+            }
 
-            $this->processClass($tokenParser->getFullClassName());
+            $mappings = array_merge(
+                $mappings,
+                $this->processClass($tokenParser->getFullClassName(), $path)
+            );
         }
+
+        return $mappings;
     }
 
     /**
      * @param string $className
+     *
+     * @return array
      */
-    public function processClass($className)
+    public function processClass($className, $path)
     {
         $reflection = new \ReflectionClass($className);
         if (null === $this->reader->getClassAnnotation($reflection, $this->annotationClass)) {
-            return;
+            return array();
         }
+
+        $mappings = array();
 
         $this->output->writeln("Found class: $className");
         foreach ($reflection->getMethods() as $method) {
@@ -107,16 +117,20 @@ class Compiler
                 );
 
                 $mapping = new Mapping();
+                $moduleFile = $reflection->getFileName();
+                $moduleFile = substr($moduleFile, strpos($moduleFile, $path));
                 $mapping
                     ->setOxidClass($annotation->getClass())
                     ->setOxidMethod($annotation->getMethod())
                     ->setModuleClass($className)
                     ->setModuleMethod($method->getName())
                     ->setReturn($annotation->hasReturnValue())
-                    ->setReturns($annotation->getReturns())
                     ->setParentExecution($annotation->getParentExecution())
-                    ->setModuleFile($reflection->getFileName());
+                    ->setModuleFile($moduleFile);
+                $mappings[] = $mapping;
             }
         }
+
+        return $mappings;
     }
 }

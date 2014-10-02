@@ -29,6 +29,10 @@ class PhpUse implements GeneratorInterface
      */
     public function getClassAlias($className)
     {
+        if (false === strpos($className, '\\')) {
+            return $className;
+        }
+
         $this->addUse($className);
 
         return $this->use[$className];
@@ -42,7 +46,7 @@ class PhpUse implements GeneratorInterface
         $code = "";
 
         foreach ($this->use as $use => $alias) {
-            $code .= "$use as $alias\n";
+            $code .= "use $use as $alias\n";
         }
 
         return $code;

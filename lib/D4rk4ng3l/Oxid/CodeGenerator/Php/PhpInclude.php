@@ -72,7 +72,7 @@ class PhpInclude implements GeneratorInterface
      */
     public function generate()
     {
-        $code = $this->includeType . " " . var_export($this->file, true) . ";";
+        $code = $this->includeType . " " . var_export($this->file, true) . ";\n";
 
         return $code;
     }

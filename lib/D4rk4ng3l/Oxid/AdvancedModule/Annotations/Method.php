@@ -6,18 +6,13 @@ namespace D4rk4ng3l\Oxid\AdvancedModule\Annotations;
  */
 class Method
 {
-    const EXECUTE_PARENT = "none";
+    const EXECUTE_NONE = "none";
     const EXECUTE_BEFORE = "before";
     const EXECUTE_AFTER = "after";
-
-    const RETURNS_NONE = "none";
-    const RETURNS_THIS = "this";
-    const RETURNS_PARENT = "parent";
 
     private $class;
     private $method;
     private $parentExecution = self::EXECUTE_BEFORE;
-    private $returns = self::RETURNS_PARENT;
     private $hasReturn = true;
 
     public function __construct($options)
@@ -76,13 +71,5 @@ class Method
     public function getParentExecution()
     {
         return $this->parentExecution;
-    }
-
-    /**
-     * @return string
-     */
-    public function getReturns()
-    {
-        return $this->returns;
     }
 }
