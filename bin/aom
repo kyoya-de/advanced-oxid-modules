@@ -1,0 +1,24 @@
+#!/usr/bin/env php
+<?php
+use D4rk4ng3l\Oxid\Commands\CompileCommand;
+use D4rk4ng3l\Console\Application;
+use Doctrine\Common\Annotations\AnnotationRegistry;
+use D4rk4ng3l\Container\ContainerLoader;
+
+define("APPLICATION_PATH", dirname(__FILE__) . "/..");
+$env = getenv('AOM_ENV');
+if (null === $env) {
+    $env = 'prod';
+}
+
+$loader = include APPLICATION_PATH . '/vendor/autoload.php';
+
+AnnotationRegistry::registerLoader(array($loader, 'loadClass'));
+
+/** @var CompiledContainer $container */
+$container = ContainerLoader::getContainer(APPLICATION_PATH);
+
+$app = new Application();
+$app->add(new CompileCommand());
+$app->setContainer($container);
+$app->run();

@@ -35,10 +35,7 @@ class TokenParser
 
     public $isClass = false;
 
-    /**
-     * @param string $contents
-     */
-    public function __construct($contents)
+    public function parse($contents)
     {
         $this->tokens = token_get_all($contents);
 
@@ -52,10 +49,7 @@ class TokenParser
         token_get_all("<?php\n/**\n *\n */");
 
         $this->numTokens = count($this->tokens);
-    }
 
-    public function parse()
-    {
         for (;$this->tokenPointer < $this->numTokens; $this->tokenPointer++) {
             $token = $this->tokens[$this->tokenPointer];
             if (T_NAMESPACE === $token[0]) {

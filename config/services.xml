@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<container
+        xmlns="http://symfony.com/schema/dic/services"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd"
+        >
+    <services>
+        <service id="annotation.reader" class="Doctrine\Common\Annotations\AnnotationReader"/>
+        <service id="console.output" class="Symfony\Component\Console\Output\ConsoleOutput"/>
+        <service id="compiler.token_parser" class="D4rk4ng3l\Oxid\Compiler\TokenParser"/>
+        <service id="compiler.module" class="D4rk4ng3l\Oxid\Compiler\Compiler">
+            <argument type="service" id="annotation.reader"/>
+            <argument type="service" id="console.output"/>
+        </service>
+        <service id="compiler.generator" class="D4rk4ng3l\Oxid\Module\Generator">
+            <argument>%path.oxid%</argument>
+            <argument>%path.module%</argument>
+        </service>
+
+    </services>
+</container>

@@ -1,0 +1,3 @@
+parameters:
+    path.module: %app.path%/modules.adv
+    path.oxid: %app.path%

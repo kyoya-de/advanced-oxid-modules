@@ -2,25 +2,61 @@
 namespace D4rk4ng3l\Oxid\Module;
 
 use D4rk4ng3l\Oxid\AdvancedModule\Metadata;
-use D4rk4ng3l\Oxid\AdvancedModule\Metadata\Extensions;
 use D4rk4ng3l\Oxid\CodeGenerator\Php\Code;
 use D4rk4ng3l\Oxid\CodeGenerator\Php\Method;
 use D4rk4ng3l\Oxid\CodeGenerator\Php\PhpClass;
 use D4rk4ng3l\Oxid\CodeGenerator\Php\PhpFile;
-use D4rk4ng3l\Oxid\CodeGenerator\Php\PhpInclude;
 use D4rk4ng3l\Oxid\CodeGenerator\Php\PhpUse;
 use D4rk4ng3l\Oxid\CodeGenerator\Php\Property;
 use D4rk4ng3l\Oxid\AdvancedModule\Annotations;
 
+/**
+ * Class Generator
+ *
+ * @package D4rk4ng3l\Oxid\Module
+ */
 class Generator
 {
 
+    /**
+     * @var array
+     */
     private $classesToLoad = array();
 
+    /**
+     * @var array
+     */
     private $mappings = array();
 
+    /**
+     * @var array
+     */
     private $metadata = array();
 
+    /**
+     * @var string
+     */
+    private $oxidPath;
+
+    /**
+     * @var string
+     */
+    private $modulePath;
+
+    /**
+     * @param string $oxidPath
+     */
+    public function __construct($oxidPath, $modulePath)
+    {
+        $this->oxidPath = $oxidPath;
+        $this->modulePath = $modulePath;
+    }
+
+    /**
+     * @param $mappings
+     *
+     * @return $this
+     */
     public function addMappings($mappings)
     {
         foreach ($mappings as $mapping) {
@@ -30,6 +66,11 @@ class Generator
         return $this;
     }
 
+    /**
+     * @param Mapping $mapping
+     *
+     * @return $this
+     */
     public function addMapping(Mapping $mapping)
     {
         $oxidClass   = $mapping->getOxidClass();
@@ -58,8 +99,12 @@ class Generator
         return $this;
     }
 
-    public function generate($oxidPath, $metadataClassName)
+    /**
+     * @param $metadataClassName
+     */
+    public function generate($metadataClassName)
     {
+        $oxidPath = $this->oxidPath;
         $this->metadata = array();
         foreach ($this->mappings as $oxidClass => $proxies) {
             foreach ($proxies as $proxyName => $mappings) {
@@ -81,7 +126,7 @@ class Generator
                     $method = new Method("get{$methodName}");
                     $method->setVisibility(Method::VISIBILITY_PRIVATE);
                     $body = "if (!class_exists('{$moduleClassName}', false)) {\n";
-                    $body .= "include SHOP_PATH . '/{$moduleFile}';\n";
+                    $body .= "include '{$moduleFile}';\n";
                     $body .= "}\n";
                     $body .= "if (null === \$this->{$instanceProperty}) {\n";
                     $body .= "\$this->{$instanceProperty} = new \\{$moduleClassName}();\n";
@@ -146,7 +191,15 @@ class Generator
                     $phpClass->addMethod($method);
                 }
 
-                $phpAutoloader = new Code("define('SHOP_PATH', '{$oxidPath}');\ninclude_once SHOP_PATH . '/vendor/autoload.php';\n");
+                $vendorPath = $this->modulePath;
+                do {
+                    $vendorPath = dirname($vendorPath) . '/vendor';
+                    if ('/' === $vendorPath || ':' == substr($vendorPath, 1, 1)) {
+                        throw new \RuntimeException('Can not locate the vendor directory!');
+                    }
+                } while (!file_exists($vendorPath));
+
+                $phpAutoloader = new Code("include_once '{$vendorPath}/autoload.php';\n");
 
                 $phpFile->addBlock($phpAutoloader);
                 $phpFile->addBlock($phpUse);
@@ -170,6 +223,13 @@ class Generator
         }
     }
 
+    /**
+     * @param $proxyName
+     * @param $metadataClassName
+     * @param $moduleId
+     *
+     * @return mixed
+     */
     private function getMetadata($proxyName, $metadataClassName, $moduleId)
     {
         if (!isset($this->metadata[$proxyName])) {

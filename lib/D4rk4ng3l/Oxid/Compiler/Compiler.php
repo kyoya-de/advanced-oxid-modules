@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Stefan
- * Date: 15.09.14
- * Time: 00:40
- */
 
 namespace D4rk4ng3l\Oxid\Compiler;
 
@@ -52,7 +46,7 @@ class Compiler
             $this->output->writeln(sprintf('Parsing file [%u/%u]: %s', $index, $count, $file));
             $fileContent = file_get_contents($file);
             $tokenParser = new TokenParser($fileContent);
-            $tokenParser->parse();
+            $tokenParser->parse($fileContent);
             if (!$tokenParser->hasClass()) {
                 $this->output->writeln('skipped!');
                 continue;

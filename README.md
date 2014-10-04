@@ -14,16 +14,11 @@ git clone http://github.com/D4rk4ng3l/advanced-oxid-modules.git
 composer install
 ```
 * Copy the directories *bin*, *lib* and *vendor* to the root of your OXID eShop installation. 
-
+* Adjust settings in *parameters.yml*
  
 USAGE
 =====
 
 ```shell
-php bin/aom compile /path/to/AdvancedModule /path/to/OXID
+php bin/aom compile
 ```
-
-TODO
-====
-
-* Improve path usages in generated modules.
