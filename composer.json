@@ -23,8 +23,5 @@
     "autoload": {
         "psr-0": { "D4rk4ng3l\\": "lib/"}
     },
-    "config": {
-        "bin-dir": "bin"
-    },
     "bin":["bin/aom"]
 }
