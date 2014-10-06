@@ -21,4 +21,5 @@ $container = ContainerLoader::getContainer(APPLICATION_PATH);
 $app = new Application();
 $app->add(new CompileCommand());
 $app->setContainer($container);
+$app->setDefaultCommand('compile');
 $app->run();

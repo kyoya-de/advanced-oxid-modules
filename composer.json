@@ -1,5 +1,5 @@
 {
-    "name":"d4rk4ng3l/advanced-oxid-mm",
+    "name":"D4rk4ng3l/advanced-oxid-modules",
     "version":"0.9.0",
     "require": {
         "doctrine/common":"~2.4",

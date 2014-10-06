@@ -15,7 +15,7 @@
         <service id="compiler.generator" class="D4rk4ng3l\Oxid\Module\Generator">
             <argument>%path.oxid%</argument>
             <argument>%path.module%</argument>
+            <argument>%app.path%</argument>
         </service>
-
     </services>
 </container>

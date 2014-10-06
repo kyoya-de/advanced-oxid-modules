@@ -44,16 +44,24 @@ class Generator
     private $modulePath;
 
     /**
-     * @param string $oxidPath
+     * @var string
      */
-    public function __construct($oxidPath, $modulePath)
+    private $vendorPath;
+
+    /**
+     * @param string $oxidPath
+     * @param string $modulePath
+     * @param string $appPath
+     */
+    public function __construct($oxidPath, $modulePath, $appPath)
     {
         $this->oxidPath = $oxidPath;
         $this->modulePath = $modulePath;
+        $this->vendorPath = $appPath . '/vendor';
     }
 
     /**
-     * @param $mappings
+     * @param Mapping[] $mappings
      *
      * @return $this
      */
@@ -199,7 +207,7 @@ class Generator
                     }
                 } while (!file_exists($vendorPath));
 
-                $phpAutoloader = new Code("include_once '{$vendorPath}/autoload.php';\n");
+                $phpAutoloader = new Code("include_once '{$this->vendorPath}/autoload.php';\n");
 
                 $phpFile->addBlock($phpAutoloader);
                 $phpFile->addBlock($phpUse);
@@ -266,4 +274,4 @@ class Generator
 
         return $methodName;
     }
-} 
+}
