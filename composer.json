@@ -1,6 +1,6 @@
 {
     "name":"d4rk4ng3l/advanced-oxid-modules",
-    "type":"project",
+    "type":"library",
     "license": "MIT",
     "homepage":"https://github.com/D4rk4ng3l/advanced-oxid-modules",
     "version":"0.9.0",
