@@ -1,5 +1,5 @@
 {
-    "name":"D4rk4ng3l/advanced-oxid-modules",
+    "name":"d4rk4ng3l/advanced-oxid-modules",
     "version":"0.9.0",
     "require": {
         "doctrine/common":"~2.4",
@@ -11,5 +11,9 @@
     },
     "autoload": {
         "psr-0": { "D4rk4ng3l\\": "lib/"}
-    }
+    },
+    "config": {
+        "bin-dir": "bin"
+    },
+    "bin":["bin/aom"]
 }
