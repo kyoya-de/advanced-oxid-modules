@@ -5,18 +5,35 @@ use D4rk4ng3l\Console\Application;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use D4rk4ng3l\Container\ContainerLoader;
 
-define("APPLICATION_PATH", dirname(__FILE__) . "/..");
 $env = getenv('AOM_ENV');
 if (null === $env) {
     $env = 'prod';
 }
 
-$loader = include APPLICATION_PATH . '/vendor/autoload.php';
+foreach (array(__DIR__ . '/../vendor/autoload.php', __DIR__ . '/../../../autoload.php') as $loaderFile) {
+    if (file_exists($loaderFile)) {
+        $appPath = dirname(dirname($loaderFile));
+        $autoLoaderFile = $loaderFile;
+        break;
+    }
+}
+
+if (!isset($appPath)) {
+    trigger_error("Can't determine the application path.", E_USER_ERROR);
+    exit(255);
+}
+
+if (!isset($autoLoaderFile)) {
+    trigger_error("Can't find autoloader.", E_USER_ERROR);
+    exit(255);
+}
+
+$loader = include $autoLoaderFile;
 
 AnnotationRegistry::registerLoader(array($loader, 'loadClass'));
 
 /** @var CompiledContainer $container */
-$container = ContainerLoader::getContainer(APPLICATION_PATH);
+$container = ContainerLoader::getContainer($appPath);
 
 $app = new Application();
 $app->add(new CompileCommand());
