@@ -13,6 +13,8 @@ use CompiledContainer;
 class ContainerLoader
 {
     private static $appPath;
+    private static $cachePath;
+    private static $configPath;
 
     /**
      * @param string $appPath
@@ -22,13 +24,15 @@ class ContainerLoader
      */
     public static function getContainer($appPath, $env = null)
     {
-        self::$appPath = $appPath;
+        static::$appPath = $appPath;
+        static::$cachePath = $appPath . '/app/cache';
+        static::$configPath = $appPath . '/app/config';
 
-        $containerCacheFile   = $appPath . '/cache/container.php';
+        $containerCacheFile   = static::$cachePath . '/container.php';
         $containerConfigCache = new ConfigCache($containerCacheFile, $env != 'prod');
 
         if (!$containerConfigCache->isFresh()) {
-            $containerBuilder = self::buildContainer();
+            $containerBuilder = static::buildContainer();
             $dumper           = new PhpDumper($containerBuilder);
             $containerConfigCache->write(
                 $dumper->dump(array('class' => 'CompiledContainer')),
@@ -50,14 +54,14 @@ class ContainerLoader
     {
         $containerBuilder = new ContainerBuilder();
 
-        $containerBuilder->setParameter('app.path', self::$appPath);
+        $containerBuilder->setParameter('app.path', static::$appPath);
 
         // 1st Load service parameters
-        $yamlFileLoader = new YamlFileLoader($containerBuilder, new FileLocator(self::$appPath . '/config'));
+        $yamlFileLoader = new YamlFileLoader($containerBuilder, new FileLocator(static::$configPath));
         $yamlFileLoader->load("parameters.yml");
 
         // and now the services
-        $xmlFileLoader = new XmlFileLoader($containerBuilder, new FileLocator(self::$appPath . '/config'));
+        $xmlFileLoader = new XmlFileLoader($containerBuilder, new FileLocator(static::$configPath));
         $xmlFileLoader->load("services.xml");
 
         $containerBuilder->compile();

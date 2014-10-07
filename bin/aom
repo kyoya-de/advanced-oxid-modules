@@ -9,10 +9,14 @@ $env = getenv('AOM_ENV');
 if (null === $env) {
     $env = 'prod';
 }
-
-foreach (array(__DIR__ . '/../vendor/autoload.php', __DIR__ . '/../../../autoload.php') as $loaderFile) {
+$paths = array(
+    '/..',
+    '/../../../..',
+);
+foreach ($paths as $path) {
+    $loaderFile = $path . '/vendor/autoload.php';
     if (file_exists($loaderFile)) {
-        $appPath = dirname(dirname($loaderFile));
+        $appPath = realpath($path);
         $autoLoaderFile = $loaderFile;
         break;
     }
