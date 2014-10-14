@@ -61,7 +61,7 @@ class ContainerLoader
         $yamlFileLoader->load("parameters.yml");
 
         // and now the services
-        $xmlFileLoader = new XmlFileLoader($containerBuilder, new FileLocator(static::$configPath));
+        $xmlFileLoader = new XmlFileLoader($containerBuilder, new FileLocator(__DIR__ . '/../../../config'));
         $xmlFileLoader->load("services.xml");
 
         $containerBuilder->compile();
