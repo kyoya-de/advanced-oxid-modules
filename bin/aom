@@ -1,46 +1,6 @@
 #!/usr/bin/env php
 <?php
-use D4rk4ng3l\Oxid\Commands\CompileCommand;
-use D4rk4ng3l\Console\Application;
-use Doctrine\Common\Annotations\AnnotationRegistry;
-use D4rk4ng3l\Container\ContainerLoader;
 
-$env = getenv('AOM_ENV');
-if (null === $env) {
-    $env = 'prod';
-}
-$paths = array(
-    '/..',
-    '/../../../..',
-);
-foreach ($paths as $path) {
-    $loaderFile = $path . '/vendor/autoload.php';
-    if (file_exists($loaderFile)) {
-        $appPath = realpath($path);
-        $autoLoaderFile = $loaderFile;
-        break;
-    }
-}
+require 'AOM.php';
 
-if (!isset($appPath)) {
-    trigger_error("Can't determine the application path.", E_USER_ERROR);
-    exit(255);
-}
-
-if (!isset($autoLoaderFile)) {
-    trigger_error("Can't find autoloader.", E_USER_ERROR);
-    exit(255);
-}
-
-$loader = include $autoLoaderFile;
-
-AnnotationRegistry::registerLoader(array($loader, 'loadClass'));
-
-/** @var CompiledContainer $container */
-$container = ContainerLoader::getContainer($appPath);
-
-$app = new Application();
-$app->add(new CompileCommand());
-$app->setContainer($container);
-$app->setDefaultCommand('compile');
-$app->run();
+AOM::run();
